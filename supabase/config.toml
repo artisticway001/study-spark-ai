@@ -1,0 +1,4 @@
+project_id = "lgkinslcgtlaqjadbfse"
+
+[functions.process-answer-key]
+verify_jwt = true
