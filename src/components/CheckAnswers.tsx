@@ -13,6 +13,7 @@ interface AnswerKey {
   id: string;
   key_name: string;
   questions: Question[];
+  image_url: string | null;
 }
 
 export const CheckAnswers = () => {
@@ -149,8 +150,25 @@ export const CheckAnswers = () => {
     }
   }, [selectedKeyId, questionId]);
 
+  const selectedKey = keys.find(k => k.id === selectedKeyId);
+
   return (
     <div className="space-y-6">
+      {selectedKey?.image_url && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Answer Key Reference</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <img 
+              src={selectedKey.image_url} 
+              alt={selectedKey.key_name}
+              className="w-full rounded-lg border border-border"
+            />
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
