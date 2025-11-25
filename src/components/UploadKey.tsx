@@ -97,9 +97,8 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
         throw new Error("No questions extracted from image");
       }
 
-      // Save to database with image URL (using a default user ID since auth is removed)
+      // Save to database with image URL (user_id is now nullable)
       const { error: dbError } = await supabase.from("answer_keys").insert({
-        user_id: '00000000-0000-0000-0000-000000000000',
         key_name: keyName,
         questions: data.questions,
         image_url: publicUrl,
