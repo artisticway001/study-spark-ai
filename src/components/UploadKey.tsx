@@ -58,11 +58,34 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
     setUploadProgress(10);
 
     try {
-      // Convert image to base64
+      // Get authenticated user
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      // Upload image to storage
       setUploadProgress(20);
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('answer-keys')
+        .upload(fileName, selectedFile);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('answer-keys')
+        .getPublicUrl(fileName);
+
+      setUploadProgress(40);
+
+      // Convert image to base64 for AI processing
       const base64Image = await convertToBase64(selectedFile);
       
-      setUploadProgress(30);
+      setUploadProgress(50);
       
       // Call edge function to process with AI
       const { data, error } = await supabase.functions.invoke("process-answer-key", {
@@ -74,22 +97,18 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
         throw new Error(error.message || "Failed to process answer key");
       }
 
-      setUploadProgress(70);
+      setUploadProgress(80);
 
       if (!data?.questions) {
         throw new Error("No questions extracted from image");
       }
 
-      // Save to database
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
-
+      // Save to database with image URL
       const { error: dbError } = await supabase.from("answer_keys").insert({
         user_id: user.id,
         key_name: keyName,
         questions: data.questions,
+        image_url: publicUrl,
       });
 
       if (dbError) throw dbError;
