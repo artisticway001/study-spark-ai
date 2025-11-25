@@ -58,16 +58,10 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
     setUploadProgress(10);
 
     try {
-      // Get authenticated user
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
-
       // Upload image to storage
       setUploadProgress(20);
       const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      const fileName = `public/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('answer-keys')
@@ -103,9 +97,9 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
         throw new Error("No questions extracted from image");
       }
 
-      // Save to database with image URL
+      // Save to database with image URL (using a default user ID since auth is removed)
       const { error: dbError } = await supabase.from("answer_keys").insert({
-        user_id: user.id,
+        user_id: '00000000-0000-0000-0000-000000000000',
         key_name: keyName,
         questions: data.questions,
         image_url: publicUrl,
@@ -139,7 +133,7 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
         <CardHeader>
           <CardTitle>Upload Answer Key</CardTitle>
           <CardDescription>
-            Upload an image of your UCEED/CEED answer key for AI processing
+            Upload an image of your answer key for AI processing
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -148,7 +142,7 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
             <Input
               id="key-name"
               type="text"
-              placeholder="e.g., CEED 2024 Practice Set 1"
+              placeholder="e.g., Practice Set 1"
               value={keyName}
               onChange={(e) => setKeyName(e.target.value)}
               disabled={isProcessing}
