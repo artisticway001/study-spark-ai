@@ -109,14 +109,6 @@ export const CheckAnswers = () => {
         description: currentQuestion?.explanation,
       });
     }
-    
-    // Auto-increment to next question
-    const nextQId = (parseInt(questionId) + 1).toString();
-    setTimeout(() => {
-      setQuestionId(nextQId);
-      resetState();
-      startTimer();
-    }, 3000);
   };
 
   const handleNext = () => {
@@ -127,15 +119,14 @@ export const CheckAnswers = () => {
           description: currentQuestion?.explanation,
         });
       }
-      
-      // Auto-increment to next question
-      const nextQId = (parseInt(questionId) + 1).toString();
-      setTimeout(() => {
-        setQuestionId(nextQId);
-        resetState();
-        startTimer();
-      }, 3000);
     }
+  };
+
+  const handleGoToNext = () => {
+    const nextQId = (parseInt(questionId) + 1).toString();
+    setQuestionId(nextQId);
+    resetState();
+    startTimer();
   };
 
   const formatTime = (seconds: number) => {
@@ -297,6 +288,11 @@ export const CheckAnswers = () => {
                     className="flex-1"
                   >
                     {gradeResult.isCorrect ? 'Next' : 'Mark & Next'}
+                  </Button>
+                )}
+                {showSolution && (
+                  <Button onClick={handleGoToNext} className="flex-1">
+                    Next Question
                   </Button>
                 )}
               </>

@@ -1,90 +1,42 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Auth } from "@/components/Auth";
+import { useState } from "react";
 import { CheckAnswers } from "@/components/CheckAnswers";
 import { UploadKey } from "@/components/UploadKey";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("check");
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    toast.success("Signed out successfully");
-  };
+  const [activeTab, setActiveTab] = useState("upload");
 
   const handleUploadSuccess = () => {
     setActiveTab("check");
-    toast.success("Switched to Check Answers tab");
+    toast.success("Answer key uploaded! Switch to Check Answers tab.");
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return <Auth />;
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">UCEED/CEED Practice Utility</h1>
-            <p className="text-sm text-muted-foreground">
-              Controlled learning for design entrance exams
-            </p>
-          </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign out
-          </Button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <header>
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Study Spark
+          </h1>
+          <p className="text-muted-foreground">
+            hey champ ready for practice
+          </p>
+        </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
-            <TabsTrigger value="check">Check Answers</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="upload">Upload Key</TabsTrigger>
+            <TabsTrigger value="check">Check Answers</TabsTrigger>
           </TabsList>
-
-          <div className="mt-8 max-w-2xl mx-auto">
-            <TabsContent value="check">
-              <CheckAnswers />
-            </TabsContent>
-
-            <TabsContent value="upload">
-              <UploadKey onUploadSuccess={handleUploadSuccess} />
-            </TabsContent>
-          </div>
+          <TabsContent value="upload" className="mt-6">
+            <UploadKey onUploadSuccess={handleUploadSuccess} />
+          </TabsContent>
+          <TabsContent value="check" className="mt-6">
+            <CheckAnswers />
+          </TabsContent>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 };
