@@ -6,8 +6,10 @@ import { toast } from "sonner";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("upload");
+  const [selectedKeyId, setSelectedKeyId] = useState<string>("");
 
-  const handleUploadSuccess = () => {
+  const handleUploadSuccess = (keyId: string) => {
+    setSelectedKeyId(keyId);
     setActiveTab("check");
     toast.success("Answer key uploaded! Switch to Check Answers tab.");
   };
@@ -33,7 +35,7 @@ const Index = () => {
             <UploadKey onUploadSuccess={handleUploadSuccess} />
           </TabsContent>
           <TabsContent value="check" className="mt-6">
-            <CheckAnswers />
+            <CheckAnswers selectedKeyId={selectedKeyId} />
           </TabsContent>
         </Tabs>
       </div>

@@ -16,9 +16,13 @@ interface AnswerKey {
   image_url: string | null;
 }
 
-export const CheckAnswers = () => {
+interface CheckAnswersProps {
+  selectedKeyId?: string;
+}
+
+export const CheckAnswers = ({ selectedKeyId: initialKeyId }: CheckAnswersProps) => {
   const [keys, setKeys] = useState<AnswerKey[]>([]);
-  const [selectedKeyId, setSelectedKeyId] = useState<string>("");
+  const [selectedKeyId, setSelectedKeyId] = useState<string>(initialKeyId || "");
   const [questionId, setQuestionId] = useState<string>("");
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [gradeResult, setGradeResult] = useState<GradeResult | null>(null);
@@ -30,6 +34,12 @@ export const CheckAnswers = () => {
   useEffect(() => {
     loadKeys();
   }, []);
+
+  useEffect(() => {
+    if (initialKeyId) {
+      setSelectedKeyId(initialKeyId);
+    }
+  }, [initialKeyId]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -257,29 +267,26 @@ export const CheckAnswers = () => {
 
           <div className="flex gap-2">
             {!gradeResult ? (
-              <Button onClick={handleCheckAnswer} className="flex-1">
+              <Button onClick={handleCheckAnswer} className="w-full">
                 Check Answer
+              </Button>
+            ) : showSolution ? (
+              <Button onClick={handleGoToNext} className="w-full">
+                Next Question
               </Button>
             ) : (
               <>
-                {!gradeResult.isCorrect && !showSolution && (
+                {!gradeResult.isCorrect && (
                   <Button onClick={handleRetry} variant="outline" className="flex-1">
                     Retry
                   </Button>
                 )}
-                {!showSolution && (
-                  <Button 
-                    onClick={gradeResult.isCorrect ? handleNext : handleMarkAndNext} 
-                    className="flex-1"
-                  >
-                    {gradeResult.isCorrect ? 'Next' : 'Mark & Next'}
-                  </Button>
-                )}
-                {showSolution && (
-                  <Button onClick={handleGoToNext} className="flex-1">
-                    Next Question
-                  </Button>
-                )}
+                <Button 
+                  onClick={gradeResult.isCorrect ? handleNext : handleMarkAndNext} 
+                  className="flex-1"
+                >
+                  {gradeResult.isCorrect ? 'Next' : 'Mark & Next'}
+                </Button>
               </>
             )}
           </div>
