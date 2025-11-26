@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Upload, Loader2, CheckCircle } from "lucide-react";
 
 interface UploadKeyProps {
-  onUploadSuccess: () => void;
+  onUploadSuccess: (keyId: string) => void;
 }
 
 export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
@@ -98,11 +98,15 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
       }
 
       // Save to database with image URL (user_id is now nullable)
-      const { error: dbError } = await supabase.from("answer_keys").insert({
-        key_name: keyName,
-        questions: data.questions,
-        image_url: publicUrl,
-      });
+      const { data: insertData, error: dbError } = await supabase
+        .from("answer_keys")
+        .insert({
+          key_name: keyName,
+          questions: data.questions,
+          image_url: publicUrl,
+        })
+        .select()
+        .single();
 
       if (dbError) throw dbError;
 
@@ -115,7 +119,7 @@ export const UploadKey = ({ onUploadSuccess }: UploadKeyProps) => {
       setUploadProgress(0);
       
       // Notify parent and switch to check answers view
-      onUploadSuccess();
+      onUploadSuccess(insertData.id);
       
     } catch (error: any) {
       console.error("Upload error:", error);
