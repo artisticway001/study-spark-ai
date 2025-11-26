@@ -232,7 +232,7 @@ export const CheckAnswers = ({ selectedKeyId: initialKeyId }: CheckAnswersProps)
 
           {gradeResult && (
             <div
-              className={`p-4 rounded-lg border-2 ${
+              className={`p-4 rounded-lg border-2 max-h-[200px] overflow-y-auto ${
                 gradeResult.feedback === 'correct'
                   ? 'bg-accent/10 border-accent'
                   : gradeResult.feedback === 'partial'
@@ -242,13 +242,13 @@ export const CheckAnswers = ({ selectedKeyId: initialKeyId }: CheckAnswersProps)
             >
               <div className="flex items-start gap-2">
                 {gradeResult.feedback === 'correct' ? (
-                  <CheckCircle2 className="h-5 w-5 text-accent mt-0.5" />
+                  <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
                 ) : gradeResult.feedback === 'partial' ? (
-                  <AlertTriangle className="h-5 w-5 text-warning mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" />
                 ) : (
-                  <XCircle className="h-5 w-5 text-destructive mt-0.5" />
+                  <XCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
                 )}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className="font-medium">{gradeResult.message}</p>
                   {showSolution && currentQuestion && (
                     <div className="mt-2 pt-2 border-t border-current/20">
