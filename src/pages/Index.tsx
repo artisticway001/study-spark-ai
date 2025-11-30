@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckAnswers } from "@/components/CheckAnswers";
 import { UploadKey } from "@/components/UploadKey";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
@@ -17,13 +18,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        <header>
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            Study Spark
-          </h1>
-          <p className="text-muted-foreground">
-            hey champ ready for practice
-          </p>
+        <header className="flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">
+              Study Spark
+            </h1>
+            <p className="text-muted-foreground">
+              hey champ ready for practice
+            </p>
+          </div>
+          <ThemeToggle />
         </header>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
